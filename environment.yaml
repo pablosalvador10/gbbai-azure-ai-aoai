@@ -1,4 +1,4 @@
-name: my-template-environment
+name: aoai-faq
 channels:
   - conda-forge
   - defaults
@@ -8,4 +8,3 @@ dependencies:
   - pip:
     - -r requirements.txt
     - -r requirements-codequality.txt
-    - -r requirements-pipelines.txt

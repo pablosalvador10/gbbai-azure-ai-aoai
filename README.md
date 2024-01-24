@@ -14,57 +14,9 @@ Welcome to the Azure AI Solutions Quick Start Template! This repository is desig
 
 - To stay updated with the latest developments and document significant changes to this project, please refer to [CHANGELOG.md](CHANGELOG.md).
 
-## Requirements
+## 🔧 Prerequisites
 
-> Modify as needed by project 
-
-### Setting Up Azure AI Services
-
-- Azure OpenAI Service: You need to create an Azure OpenAI service instance and obtain the API key. [start here](https://learn.microsoft.com/en-us/azure/ai-services/openai/)
-- Azure Speech AI Service: Required for speech-to-text conversion. Set up the service and get the subscription key and region. [start here](https://azure.microsoft.com/en-us/products/ai-services/ai-speech)
-- Azure Language Service: Necessary for language understanding and intent recognition.[start here](https://azure.microsoft.com/en-us/products/ai-services/ai-language)
-
-### Configuration Env variables
-
-We will now use environment variables to store our configuration. This is a more secure practice as it prevents sensitive data from being accidentally committed and pushed to version control systems.
-
-Create a `.env` file in your project root and add the following variables:
-
-```env
-# Your Azure Speech Service subscription key
-SPEECH_KEY=<Your_Azure_Speech_Service_Subscription_Key>
-
-# Your Azure Speech Service region
-SPEECH_REGION=<Your_Azure_Speech_Service_Region>
-
-# Your Azure Machine Learning workspace key
-INTENT_KEY=<Your_Azure_Machine_Learning_Workspace_Key>
-
-# Your Azure OpenAI API key
-OPENAI_KEY=<Your_Azure_OpenAI_API_Key>
-
-# The model used for chat
-CHAT_MODEL=<Your_Chat_Model>
-
-# The model used for completions
-COMPLETION_MODEL=<Your_Completion_Model>
-
-# The base URL for the OpenAI API
-OPENAI_API_BASE=<Your_OpenAI_API_Base_URL>
-
-# The version of the OpenAI API
-OPENAI_API_VERSION=<Your_OpenAI_API_Version>
-
-# Your Azure Storage connection string
-AZURE_STORAGE_CONNECTION_STRING=<Your_Azure_Storage_Connection_String>
-``` 
-
-`SPEECH_KEY` and `SPEECH_REGION` are used for the Azure Speech Service.
-`INTENT_KEY` is used for the Azure Machine Learning workspace.
-`OPENAI_KEY`, `CHAT_MODEL`, `COMPLETION_MODEL`, `OPENAI_API_BASE`, and `OPENAI_API_VERSION` are used for the Azure OpenAI API.
-`AZURE_STORAGE_CONNECTION_STRING` is used for Azure Storage.
-
-> 📌 Note Remember not to commit the .env file to your version control system. Add it to your .gitignore file to prevent it from being tracked.
+Please make sure you have met all the prerequisites for this project. A detailed guide on how to set up your environment and get ready to run all the notebooks and code in this repository can be found in the [SETTINGS.md](SETTINGS.md) file. Please follow the instructions there to ensure a smooth exprience.
 
 ## 🌲 Project Tree Structure
 
