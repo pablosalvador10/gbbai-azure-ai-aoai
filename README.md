@@ -1,18 +1,19 @@
-# Azure AI Solutions Quick Start Template <img src="./utils/images/azure_logo.png" alt="Azure Logo" style="width:30px;height:30px;"/>
+# <img src="./utils/images/azure_logo.png" alt="Azure Logo" style="width:30px;height:30px;"/> Decoding Azure OpenAI
 
-Welcome to the Azure AI Solutions Quick Start Template! This repository is designed to be a rapid launchpad for your Azure AI projects. Whether you're working in an enterprise or academic environment, this template integrates best practices to ensure a smooth development journey from start to finish.
+Welcome to "Decoding Azure OpenAI: A Developer's Guide". This comprehensive guide is tailored to assist developers in constructing robust Large Language Model (LLM) architectures and applications using Azure OpenAI as the core processing engine. The goal is to tackle the complexities developers encounter, offer pragmatic solutions to intricate challenges, and unlock the immense potential of Azure's OpenAI services.
 
-## 💼 Using this Template: Your Gateway to Advanced AI Development & Collaboration!
 
-- **🔄 Development Workflow**: Get to know our optimized workflow, designed to foster effective collaboration and a focus on product-centric development. See our [CONTRIBUTING GUIDE](./CONTRIBUTING.md) for more details.
+## 🛠️ From Challenges to Solutions
 
-- **🚀 Advanced AI Development Process**: Understand the specifics of managing Azure AI projects, from issue reporting to pull requests, while adhering to best practices in advanced feature development and complex system troubleshooting.
+The series embraces a focused problem-solution framework, pairing each challenge with a detailed article and a complementary Jupyter notebook. This structured approach ensures a comprehensive understanding of the solution conceptually and practically.
 
-- **🔍 Testing & QA for AI Systems**: Learn about the importance of rigorous testing in AI projects and discover efficient development and testing techniques tailored for AI systems with tools like Jupyter Notebooks and `%%ipytest`.
 
-- **🔢 Version & Branching Strategies for AI Projects**: Get to know our versioning system and explore the project’s branching strategy, which ensures smooth transitions between development, staging, and production, especially for AI-driven applications.
+| 🚩 **Challenge** | 📚 **Article** | 📓 **Practice** |
+|:----------------:|:--------------:|:---------------:|
+| Unpacking Azure OpenAI API Headers | [Read Article](https://medium.com/p/6dbe881e732a/edit) | [Try It Out](https://github.com/your-repo/notebook-link-for-rate-limits) |
 
-- To stay updated with the latest developments and document significant changes to this project, please refer to [CHANGELOG.md](CHANGELOG.md).
+
+New entries will be added regularly, broadening your practical knowledge and skills in applying Azure OpenAI to real-world challenges. This resource is crafted for anyone looking to deepen their understanding and hands-on experience with Azure OpenAI technologies.
 
 ## 🔧 Prerequisites
 
@@ -21,16 +22,15 @@ Please make sure you have met all the prerequisites for this project. A detailed
 ## 🌲 Project Tree Structure
 
 ```markdown
-📂 gbbai-azure-ai-template
+📂 gbbai-azure-ai-aoai
 ┣ 📂 notebooks <- For development, EDA, and quick testing (Jupyter notebooks for analysis and development).
 ┣ 📂 src <- Houses main source code for data processing, feature engineering, modeling, inference, and evaluation.
 ┣ 📂 test <- Runs unit and integration tests for code validation and QA.
 ┣ 📂 utils <- Contains utility functions and shared code used throughout the project.
 ┣ 📜 .env.sample <- Sample environment variables file. Replace with your own.
 ┣ 📜 .pre-commit-config.yaml <- Config for pre-commit hooks ensuring code quality and consistency.
-┣ 📜 01-workshop.ipynb <- Jupyter notebook for the workshop.
+┣ 📜 01-headers-api-response.ipynb <- Jupyter notebook for the workshop.
 ┣ 📜 CHANGELOG.md <- Logs project changes, updates, and version history.
-┣ 📜 USAGE.md <- Guidelines for using this template.
 ┣ 📜 environment.yaml <- Conda environment configuration.
 ┣ 📜 Makefile <- Simplifies common development tasks and commands.
 ┣ 📜 pyproject.toml <- Configuration file for build system requirements and packaging-related metadata.

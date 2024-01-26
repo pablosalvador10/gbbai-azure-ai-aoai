@@ -28,14 +28,18 @@ class AzureOpenAIManager:
         :param chat_model_name: The Chat Model Name. If not provided, it will be fetched from the environment variable "AZURE_AOAI_CHAT_MODEL_NAME".
         :param embedding_model_name: The Embedding Model Deployment ID. If not provided, it will be fetched from the environment variable "AZURE_AOAI_EMBEDDING_DEPLOYMENT_ID".
         """
-        self.openai_client = AzureOpenAI(
-            api_key=api_key or os.getenv("AZURE_OPENAI_KEY"),
-            api_version=api_version or os.getenv("AZURE_OPENAI_API_VERSION") or "2023-05-15",
-            azure_endpoint=azure_endpoint or os.getenv("AZURE_OPENAI_ENDPOINT"),
-        )
+        self.api_key = api_key or os.getenv("AZURE_OPENAI_KEY")
+        self.api_version = api_version or os.getenv("AZURE_OPENAI_API_VERSION") or "2023-05-15"
+        self.azure_endpoint = azure_endpoint or os.getenv("AZURE_OPENAI_ENDPOINT")
         self.completion_model_name = completion_model_name or os.getenv("AZURE_AOAI_COMPLETION_MODEL_DEPLOYMENT_ID")
-        self.chat_model_name = chat_model_name or os.getenv("AZURE_AOAI_CHAT_MODEL_NAME")
+        self.chat_model_name = chat_model_name or os.getenv("AZURE_AOAI_CHAT_MODEL_DEPLOYMENT_ID")
         self.embedding_model_name = embedding_model_name or os.getenv("AZURE_AOAI_EMBEDDING_DEPLOYMENT_ID")
+
+        self.openai_client = AzureOpenAI(
+            api_key=self.api_key,
+            api_version=self.api_version,
+            azure_endpoint=self.azure_endpoint,
+        )
 
         self._validate_api_configurations()
 
@@ -46,11 +50,10 @@ class AzureOpenAIManager:
         if not all(
             [
                 self.openai_client.api_key,
-                self.openai_client.api_version,
-                self.openai_client.azure_endpoint,
+                self.azure_endpoint,
             ]
         ):
-            raise ValueError("One or more OpenAI API setup variables are empty. Please review your environment variables and `SETTINGS.md`"")
+            raise ValueError("One or more OpenAI API setup variables are empty. Please review your environment variables and `SETTINGS.md`")
 
     def generate_completion_response(
         self,
