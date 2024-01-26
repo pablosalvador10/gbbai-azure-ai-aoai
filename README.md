@@ -19,22 +19,6 @@ New entries will be added regularly, broadening your practical knowledge and ski
 
 Please make sure you have met all the prerequisites for this project. A detailed guide on how to set up your environment and get ready to run all the notebooks and code in this repository can be found in the [SETTINGS.md](SETTINGS.md) file. Please follow the instructions there to ensure a smooth exprience.
 
-## 🌲 Project Tree Structure
+## 💼 Contributing:
 
-```markdown
-📂 gbbai-azure-ai-aoai
-┣ 📂 notebooks <- For development, EDA, and quick testing (Jupyter notebooks for analysis and development).
-┣ 📂 src <- Houses main source code for data processing, feature engineering, modeling, inference, and evaluation.
-┣ 📂 test <- Runs unit and integration tests for code validation and QA.
-┣ 📂 utils <- Contains utility functions and shared code used throughout the project.
-┣ 📜 .env.sample <- Sample environment variables file. Replace with your own.
-┣ 📜 .pre-commit-config.yaml <- Config for pre-commit hooks ensuring code quality and consistency.
-┣ 📜 01-headers-api-response.ipynb <- Jupyter notebook for the workshop.
-┣ 📜 CHANGELOG.md <- Logs project changes, updates, and version history.
-┣ 📜 environment.yaml <- Conda environment configuration.
-┣ 📜 Makefile <- Simplifies common development tasks and commands.
-┣ 📜 pyproject.toml <- Configuration file for build system requirements and packaging-related metadata.
-┣ 📜 README.md <- Overview, setup instructions, and usage details of the project.
-┣ 📜 requirements-codequality.txt <- Requirements for code quality tools and libraries.
-┣ 📜 requirements.txt <- General project dependencies.
-```
+Eager to make significant contributions? Our **[CONTRIBUTING](./CONTRIBUTING.md)** guide is your essential resource! It lays out a clear path.
