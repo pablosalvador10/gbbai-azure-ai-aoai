@@ -10,7 +10,7 @@ The series embraces a focused problem-solution framework, pairing each challenge
 
 | 🚩 **Challenge** | 📚 **Article** | 📓 **Practice** |
 |:----------------:|:--------------:|:---------------:|
-| Unpacking Azure OpenAI API Headers | [Read Article](https://medium.com/p/6dbe881e732a/edit) | [Try It Out](https://github.com/your-repo/notebook-link-for-rate-limits) |
+| Unpacking Azure OpenAI API Headers | [Read Article](https://medium.com/p/6dbe881e732a/edit) | [Try It Out](01-headers-api-response.ipynb) |
 
 
 New entries will be added regularly, broadening your practical knowledge and skills in applying Azure OpenAI to real-world challenges. This resource is crafted for anyone looking to deepen their understanding and hands-on experience with Azure OpenAI technologies.
