@@ -13,11 +13,16 @@ load_dotenv()
 logger = get_logger()
 
 
-import os
-
 class AzureOpenAIManager:
-    def __init__(self, api_key: Optional[str] = None, api_version: Optional[str] = None, azure_endpoint: Optional[str] = None, 
-                 completion_model_name: Optional[str] = None, chat_model_name: Optional[str] = None, embedding_model_name: Optional[str] = None):
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        api_version: Optional[str] = None,
+        azure_endpoint: Optional[str] = None,
+        completion_model_name: Optional[str] = None,
+        chat_model_name: Optional[str] = None,
+        embedding_model_name: Optional[str] = None,
+    ):
         """
         Initializes the Azure OpenAI Manager with necessary configurations.
 
@@ -29,11 +34,19 @@ class AzureOpenAIManager:
         :param embedding_model_name: The Embedding Model Deployment ID. If not provided, it will be fetched from the environment variable "AZURE_AOAI_EMBEDDING_DEPLOYMENT_ID".
         """
         self.api_key = api_key or os.getenv("AZURE_OPENAI_KEY")
-        self.api_version = api_version or os.getenv("AZURE_OPENAI_API_VERSION") or "2023-05-15"
+        self.api_version = (
+            api_version or os.getenv("AZURE_OPENAI_API_VERSION") or "2023-05-15"
+        )
         self.azure_endpoint = azure_endpoint or os.getenv("AZURE_OPENAI_ENDPOINT")
-        self.completion_model_name = completion_model_name or os.getenv("AZURE_AOAI_COMPLETION_MODEL_DEPLOYMENT_ID")
-        self.chat_model_name = chat_model_name or os.getenv("AZURE_AOAI_CHAT_MODEL_DEPLOYMENT_ID")
-        self.embedding_model_name = embedding_model_name or os.getenv("AZURE_AOAI_EMBEDDING_DEPLOYMENT_ID")
+        self.completion_model_name = completion_model_name or os.getenv(
+            "AZURE_AOAI_COMPLETION_MODEL_DEPLOYMENT_ID"
+        )
+        self.chat_model_name = chat_model_name or os.getenv(
+            "AZURE_AOAI_CHAT_MODEL_DEPLOYMENT_ID"
+        )
+        self.embedding_model_name = embedding_model_name or os.getenv(
+            "AZURE_AOAI_EMBEDDING_DEPLOYMENT_ID"
+        )
 
         self.openai_client = AzureOpenAI(
             api_key=self.api_key,
@@ -53,7 +66,9 @@ class AzureOpenAIManager:
                 self.azure_endpoint,
             ]
         ):
-            raise ValueError("One or more OpenAI API setup variables are empty. Please review your environment variables and `SETTINGS.md`")
+            raise ValueError(
+                "One or more OpenAI API setup variables are empty. Please review your environment variables and `SETTINGS.md`"
+            )
 
     def generate_completion_response(
         self,
