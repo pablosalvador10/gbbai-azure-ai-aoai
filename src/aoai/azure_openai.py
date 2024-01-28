@@ -1,9 +1,17 @@
-import os
-from typing import Dict, List, Optional
+"""
+`azure_openai.py` is a module for managing interactions with the Azure OpenAI API within our application.
 
+"""
+import json
+import os
+from typing import Any, Dict, List, Optional, Tuple
+
+import requests
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 
+from src.aoai.tokenizer import AzureOpenAITokenizer
+from src.aoai.utils import extract_rate_limit_and_usage_info
 from utils.ml_logging import get_logger
 
 # Load environment variables from .env file
@@ -14,6 +22,13 @@ logger = get_logger()
 
 
 class AzureOpenAIManager:
+    """
+    A manager class for interacting with the Azure OpenAI API.
+
+    This class provides methods for generating text completions and chat responses using the Azure OpenAI API.
+    It also provides methods for validating API configurations and getting the OpenAI client.
+    """
+
     def __init__(
         self,
         api_key: Optional[str] = None,
@@ -37,7 +52,7 @@ class AzureOpenAIManager:
         self.api_version = (
             api_version or os.getenv("AZURE_OPENAI_API_VERSION") or "2023-05-15"
         )
-        self.azure_endpoint = azure_endpoint or os.getenv("AZURE_OPENAI_ENDPOINT")
+        self.azure_endpoint = azure_endpoint or os.getenv("AZURE_OPENAI_API_ENDPOINT")
         self.completion_model_name = completion_model_name or os.getenv(
             "AZURE_AOAI_COMPLETION_MODEL_DEPLOYMENT_ID"
         )
@@ -54,11 +69,30 @@ class AzureOpenAIManager:
             azure_endpoint=self.azure_endpoint,
         )
 
+        self.tokenizer = AzureOpenAITokenizer()
+
         self._validate_api_configurations()
+
+    def get_azure_openai_client(self):
+        """
+        Returns the OpenAI client.
+
+        This method is used to get the OpenAI client that is used to interact with the OpenAI API.
+        The client is initialized with the API key and endpoint when the AzureOpenAIManager object is created.
+
+        :return: The OpenAI client.
+        """
+        return self.openai_client
 
     def _validate_api_configurations(self):
         """
         Validates if all necessary configurations are set.
+
+        This method checks if the API key and Azure endpoint are set in the OpenAI client.
+        These configurations are necessary for making requests to the OpenAI API.
+        If any of these configurations are not set, the method raises a ValueError.
+
+        :raises ValueError: If the API key or Azure endpoint is not set.
         """
         if not all(
             [
@@ -168,7 +202,14 @@ class AzureOpenAIManager:
         self, input_text: str, model_name: Optional[str] = None, **kwargs
     ) -> Optional[str]:
         """
-        Creates an embedding using Azure OpenAI's Foundation models.
+        Generates an embedding for the given input text using Azure OpenAI's Foundation models.
+
+
+        :param input_text: The text to generate an embedding for.
+        :param model_name: The name of the model to use for generating the embedding. If None, the default embedding model is used.
+        :param kwargs: Additional parameters for the API request.
+        :return: The embedding as a JSON string, or None if an error occurred.
+        :raises Exception: If an error occurs while making the API request.
         """
         try:
             response = self.openai_client.embeddings.create(
@@ -184,3 +225,91 @@ class AzureOpenAIManager:
         except Exception as e:
             logger.error(f"OpenAI API error: {e}")
             return None
+
+    def call_azure_openai_chat_completions_api(
+        self, body: dict = None, api_version: str = "2023-11-01"
+    ):
+        """
+        Calls the Azure OpenAI API with the given parameters.
+
+        :param body (dict): The body of the request for "post" method. Defaults to None.
+        :param api_version (str): The API version to use. Defaults to "2023-11-01".
+
+        :return: The status code and response from the API call, along with rate limit headers.
+        """
+        url = f"{self.azure_endpoint}/openai/deployments/{self.chat_model_name}/chat/completions?api-version={api_version}"
+        headers = {
+            "Content-Type": "application/json",
+            "api-key": self.api_key,
+        }
+
+        with requests.Session() as session:
+            session.headers.update(headers)
+
+            try:
+                response = session.post(url, json=body)
+                response.raise_for_status()  # Raises HTTPError for bad responses
+            except requests.HTTPError as http_err:
+                logger.error(f"HTTP error occurred: {http_err}")
+                return response.status_code, http_err.response.json(), {}
+            except Exception as err:
+                logger.error(f"An error occurred: {err}")
+                return None, None, {}
+
+        # Extract rate limit headers and usage details
+        rate_limit_headers = extract_rate_limit_and_usage_info(response)
+        return response.status_code, response.json(), rate_limit_headers
+
+    def analyze_chat_completion_token_count_results(
+        self, conversations: List[List[Dict[str, Any]]], model: str
+    ) -> Tuple[List[Dict[str, Any]], int, int]:
+        """
+        Analyze a list of conversations to compare the estimated token counts against actual values.
+        This function is intended to analyze results from Azure OpenAI's chat completion API.
+
+        :param conversations: A list of conversation prompts.
+        :param model: The name of the model used for token estimation.
+
+        :return: A tuple containing the analysis results, total estimated tokens, and total actual tokens.
+        """
+        analysis_results = []
+        total_estimated = 0
+        total_actual = 0
+
+        for conversation in conversations:
+            body = {
+                "max_tokens": 24,
+                "temperature": 1,
+                "top_p": 1,
+                "user": "",
+                "n": 1,
+                "presence_penalty": 0,
+                "frequency_penalty": 0,
+                "messages": conversation,
+            }
+
+            (
+                status_code,
+                response,
+                rate_limit_info,
+            ) = self.call_azure_openai_chat_completions_api(
+                body=body, api_version="2023-05-15"
+            )
+
+            if status_code != 200:
+                print(f"API call failed for conversation: {json.dumps(conversation)}")
+                continue
+
+            estimated_tokens = self.tokenizer.estimate_tokens_azure_openai(
+                conversation, model
+            )
+            actual_tokens = rate_limit_info["prompt-tokens"]
+
+            analysis_results.append(
+                {"estimated_tokens": estimated_tokens, "actual_tokens": actual_tokens}
+            )
+
+            total_estimated += estimated_tokens
+            total_actual += actual_tokens
+
+        return analysis_results, total_estimated, total_actual

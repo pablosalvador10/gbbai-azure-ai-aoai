@@ -1,4 +1,4 @@
-PYTHON_INTERPRETER = python3
+PYTHON_INTERPRETER = python
 CONDA_ENV ?= my-template-environment
 export PYTHONPATH=$(PWD):$PYTHONPATH;
 
@@ -44,12 +44,13 @@ fix_code_quality:
 	black .
 	isort .
 	ruff --fix .
+	interrogate src -v -i --fail-under=80 -e 'src/**/__init__.py'
 
 # Targets for running tests
 run_unit_tests:
 	$(PYTHON_INTERPRETER) -m pytest --cov=my_module --cov-report=term-missing --cov-config=.coveragerc
 
-check_and_fix_code_quality: fix_code_quality check_code_quality
+check_and_fix_code_quality: fix_code_quality run_unit_tests
 check_and_fix_test_quality: run_unit_tests
 
 # Colored text
