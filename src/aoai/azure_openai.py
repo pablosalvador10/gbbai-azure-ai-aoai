@@ -3,6 +3,7 @@
 
 """
 import json
+import openai
 import os
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -138,6 +139,18 @@ class AzureOpenAIManager:
             logger.info(f"Generated completion: {completion}")
             return completion
 
+        except openai.APIConnectionError as e:
+            logger.error("The server could not be reached")
+            logger.error(e.__cause__)
+            return None
+        except openai.RateLimitError as e:
+            logger.error("A 429 status code was received; we should back off a bit.")
+            return None
+        except openai.APIStatusError as e:
+            logger.error("Another non-200-range status code was received")
+            logger.error(e.status_code)
+            logger.error(e.response)
+            return None
         except Exception as e:
             logger.error(f"OpenAI API error: {e}")
             return None
@@ -194,6 +207,18 @@ class AzureOpenAIManager:
 
             return response_content
 
+        except openai.APIConnectionError as e:
+            logger.error("The server could not be reached")
+            logger.error(e.__cause__)
+            return None
+        except openai.RateLimitError as e:
+            logger.error("A 429 status code was received; we should back off a bit.")
+            return None
+        except openai.APIStatusError as e:
+            logger.error("Another non-200-range status code was received")
+            logger.error(e.status_code)
+            logger.error(e.response)
+            return None
         except Exception as e:
             logger.error(f"Contextual response generation error: {e}")
             return None
@@ -203,7 +228,6 @@ class AzureOpenAIManager:
     ) -> Optional[str]:
         """
         Generates an embedding for the given input text using Azure OpenAI's Foundation models.
-
 
         :param input_text: The text to generate an embedding for.
         :param model_name: The name of the model to use for generating the embedding. If None, the default embedding model is used.
@@ -215,13 +239,25 @@ class AzureOpenAIManager:
             response = self.openai_client.embeddings.create(
                 input=input_text,
                 model=model_name or self.embedding_model_name,
-                kwargs=kwargs,
+                **kwargs,
             )
 
             embedding = response.model_dump_json(indent=2)
             logger.info(f"Created embedding: {embedding}")
             return embedding
 
+        except openai.APIConnectionError as e:
+            logger.error("The server could not be reached")
+            logger.error(e.__cause__)
+            return None
+        except openai.RateLimitError as e:
+            logger.error("A 429 status code was received; we should back off a bit.")
+            return None
+        except openai.APIStatusError as e:
+            logger.error("Another non-200-range status code was received")
+            logger.error(e.status_code)
+            logger.error(e.response)
+            return None
         except Exception as e:
             logger.error(f"OpenAI API error: {e}")
             return None
@@ -249,9 +285,13 @@ class AzureOpenAIManager:
             try:
                 response = session.post(url, json=body)
                 response.raise_for_status()  # Raises HTTPError for bad responses
-            except requests.HTTPError as http_err:
-                logger.error(f"HTTP error occurred: {http_err}")
-                return response.status_code, http_err.response.json(), {}
+            except requests.ConnectionError as e:
+                logger.error("The server could not be reached")
+                logger.error(e.__cause__)
+                return None, None, {}
+            except requests.HTTPError as e:
+                logger.error("A 429 status code was received; we should back off a bit.")
+                return response.status_code, e.response.json(), {}
             except Exception as err:
                 logger.error(f"An error occurred: {err}")
                 return None, None, {}
