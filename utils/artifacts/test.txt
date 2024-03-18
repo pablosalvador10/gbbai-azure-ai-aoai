@@ -1,0 +1,11 @@
+1. If a machine learning model processes text data at a rate of 500 words per minute, how long will it take to process a document of 10,000 words? (Answer: 10,000 words / 500 words per minute = 20 minutes)
+2. If a text document has 20,000 words and the tokenization process breaks it down into 22,000 tokens, what is the average number of tokens per word? (Answer: 22,000 tokens / 20,000 words = 1.1 tokens per word)
+3. If a sentiment analysis tool analyzes 1000 product reviews and finds that 300 are positive, 500 are neutral, and the rest are negative, what percentage of the reviews are negative? (Answer: 1000 - 300 - 500 = 200 negative reviews, so 200/1000 * 100 = 20% are negative)
+4. If a speech recognition system has an accuracy of 95% in understanding spoken words, what is the probability it will understand 19 out of 20 words correctly? (Answer: 95% or 0.95 probability)
+5. If a machine translation model takes 2 seconds to translate a sentence in one language to another, how long will it take to translate 450 sentences? (Answer: 450 sentences * 2 seconds per sentence = 900 seconds)
+6. If a text summarization tool reduces the size of a document by 60%, what is the size of the summary if the original document was 5000 words long? (Answer: 5000 words * 40% = 2000 words)
+7. If a Named Entity Recognition (NER) system identifies 200 named entities in a 1000 word text, what is the ratio of named entities to the total number of words? (Answer: 200 named entities / 1000 words = 0.2 or 1:5)
+8. If a topic modeling algorithm identifies 5 topics in a 10,000-word document, what is the average number of words per topic? (Answer: 10,000 words / 5 topics = 2000 words per topic)
+9. If a chatbot can handle 100 queries per hour, how many queries can it handle in a day? (Answer: 100 queries per hour * 24 hours = 2400 queries)
+10. If the error rate in a speech recognition system decreases by 2% each year, what will be the error rate after 5 years if the current error rate is 10%? (Answer: 10% - 5*2% = 0% error rate)
+
