@@ -11,8 +11,8 @@ import requests
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 
-from src.aoai.tokenizer import AzureOpenAITokenizer
-from src.aoai.utils import extract_rate_limit_and_usage_info
+from aoai.tokenizer import AzureOpenAITokenizer
+from aoai.utils import extract_rate_limit_and_usage_info
 from utils.ml_logging import get_logger
 
 # Load environment variables from .env file
@@ -21,6 +21,10 @@ load_dotenv()
 # Set up logger
 logger = get_logger()
 
+TELEMETRY_USER_AGENT_HEADER = "x-ms-useragent"
+USER_AGENT = "aoai-benchmark"
+UTILIZATION_HEADER = "azure-openai-deployment-utilization"
+RETRY_AFTER_MS_HEADER = "retry-after-ms"
 
 class AzureOpenAIManager:
     """
@@ -273,11 +277,14 @@ class AzureOpenAIManager:
 
         :return: The status code and response from the API call, along with rate limit headers.
         """
-        url = f"{self.azure_endpoint}/openai/deployments/{self.chat_model_name}/chat/completions?api-version={api_version}"
+        url = f"{self.azure_endpoint}openai/deployments/{self.chat_model_name}/chat/completions?api-version={api_version}"
         headers = {
             "Content-Type": "application/json",
             "api-key": self.api_key,
+            TELEMETRY_USER_AGENT_HEADER: USER_AGENT,
         }
+        # Log the request
+        logger.debug(f"Sending request to {url} with headers {headers} and body {body}")
 
         with requests.Session() as session:
             session.headers.update(headers)
@@ -290,8 +297,9 @@ class AzureOpenAIManager:
                 logger.error(e.__cause__)
                 return None, None, {}
             except requests.HTTPError as e:
-                logger.error("A 429 status code was received; we should back off a bit.")
-                return response.status_code, e.response.json(), {}
+                if e.response.status_code == 429:
+                    logger.error("A 429 status code was received; we should back off a bit.")
+                return e.response.status_code, e.response.json(), {}
             except Exception as err:
                 logger.error(f"An error occurred: {err}")
                 return None, None, {}

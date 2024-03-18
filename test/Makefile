@@ -78,3 +78,6 @@ remove_conda_env:
 run_pylint:
 	@echo "Running linter"
 	find . -type f -name "*.py" ! -path "./tests/*" | xargs pylint -disable=logging-fstring-interpolation > utils/pylint_report/pylint_report.txt
+
+make run_speed_test:
+	$(PYTHON_INTERPRETER) ./benchmark/speedtest.py

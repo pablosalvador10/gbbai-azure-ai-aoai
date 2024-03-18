@@ -2,3 +2,7 @@ openai
 tiktoken
 requests
 python-dotenv
+pandas
+seaborn
+pyarrow
+backoff
