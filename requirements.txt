@@ -5,4 +5,5 @@ python-dotenv
 pandas
 seaborn
 pyarrow
+aiohttp
 backoff

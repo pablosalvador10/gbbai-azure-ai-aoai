@@ -4,6 +4,9 @@
 """
 import json
 import openai
+import aiohttp
+import time
+import asyncio
 import os
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -154,6 +157,59 @@ class AzureOpenAIManager:
         except Exception as e:
             logger.error(f"OpenAI API error: {e}")
             return None
+        
+    async def async_generate_chat_completion_response(
+        self,
+        conversation_history: List[Dict[str, str]],
+        query: str,
+        system_message_content: str = '''You are an AI assistant that
+          helps people find information. Please be precise, polite, and concise.''',
+        temperature: float = 0.7,
+        deployment_name: str = None,
+        max_tokens: int = 150,
+        seed: int = 42,
+        top_p: float = 1.0,
+        **kwargs
+    ):
+        """
+        Asynchronously generates a text completion using Azure OpenAI's Foundation models.
+        This method utilizes the chat completion API to respond to queries based on the conversation history.
+
+        :param conversation_history: A list of past conversation messages formatted as dictionaries.
+        :param query: The user's current query or message.
+        :param system_message_content: Instructions for the AI on how to behave during the completion.
+        :param temperature: Controls randomness in the generation, lower values mean less random completions.
+        :param max_tokens: The maximum number of tokens to generate.
+        :param seed: Seed for random number generator for reproducibility.
+        :param top_p: Nucleus sampling parameter controlling the size of the probability mass considered for token generation.
+        :return: The generated text completion or None if an error occurs.
+        """
+
+        messages_for_api = conversation_history + [{"role": "system", "content": system_message_content},
+                                                {"role": "user", "content": query}]
+
+        response = None
+        try:
+            response = self.openai_client.chat.completions.create(
+                model= deployment_name or self.chat_model_name,
+                messages=messages_for_api,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                seed=seed,
+                top_p=top_p,
+                **kwargs,
+            )
+            # Process and output the completion text
+            for event in response:
+                if event.choices:
+                    event_text = event.choices[0].delta
+                    if event_text:
+                        print(event_text.content, end='', flush=True)
+                        time.sleep(0.01)  # Maintain minimal sleep to reduce latency
+        except Exception as e:
+            print(f"An error occurred: {str(e)}")
+
+        return response
 
     def generate_chat_response(
         self,
