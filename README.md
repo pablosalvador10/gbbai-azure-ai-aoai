@@ -1,30 +1,25 @@
-# My GenAI Engineering Diary 🌟
+# <img src="./utils/images/azure_logo.png" alt="Azure Logo" style="width:30px;height:30px;"/> Decoding Azure OpenAI
 
-Welcome to the **GenAI Engineering Diary**: A Developer's Guide. This comprehensive resource is designed to help developers build robust Large Language Model (LLM) architectures and applications using Azure AI as the core processing engine. My mission is to demystify the complexities of AI development, offer practical solutions to intricate challenges, and unlock the immense potential of Azure's AI services.
+Welcome to "Decoding Azure OpenAI: A Developer's Guide". This comprehensive guide is tailored to assist developers in constructing robust Large Language Model (LLM) architectures and applications using Azure OpenAI as the core processing engine. The goal is to tackle the complexities developers encounter, offer pragmatic solutions to intricate challenges, and unlock the immense potential of Azure's OpenAI services.
 
-As a Principal AI Global Black Belt at Microsoft, I collaborate with some of the world's largest companies, guiding them through the complexities of AI development with the latest patterns in Azure.
-
-<details>
-  <summary>📖 Table of Contents</summary>
-
-1. [From Challenges to Solutions](#FromChallengestoSolutions)
-2. [Contributing](#contributing)
-3. [Contact](#contact)
-
-</details>
 
 ## 🛠️ From Challenges to Solutions
 
-This diary embraces a focused problem-solution framework, pairing each challenge with a detailed article and complementary resources. This structured approach ensures a comprehensive understanding of the solution both conceptually and practically.
+The series embraces a focused problem-solution framework, pairing each challenge with a detailed article and a complementary Jupyter notebook. This structured approach ensures a comprehensive understanding of the solution conceptually and practically.
 
-New entries will be added regularly, broadening your practical knowledge and skills in applying Azure AI to real-world challenges. This resource is crafted for anyone looking to deepen their understanding and hands-on experience with Azure AI technologies.
 
-## 💼 Contributing
+| 🚩 **Challenge** | 📚 **Article** | 📓 **Practice** |
+|:----------------:|:--------------:|:---------------:|
+| Unpacking Azure OpenAI API Headers | [Read Article](https://medium.com/p/6dbe881e732a/edit) | [Try It Out](https://github.com/pablosalvador10/gbbai-azure-ai-aoai/blob/main/01-headers-api-response.ipynb) |
+| Matching Token Count | [Read Article](link-to-article) | [Try It Out](link-to-notebook) |
 
-Eager to make significant contributions? Our **[CONTRIBUTING](./CONTRIBUTING.md)** guide is your essential resource! It lays out a clear path for contributing to the repository and helping improve the collective knowledge of the community.
 
-## 📬 Contact
+New entries will be added regularly, broadening your practical knowledge and skills in applying Azure OpenAI to real-world challenges. This resource is crafted for anyone looking to deepen their understanding and hands-on experience with Azure OpenAI technologies.
 
-- 💌 **Shoot me an email:** [pablosalvadorlopez11@gmail.com](mailto:pablosalvadorlopez11@gmail.com)
-- 🔗 **LinkedIn:** [Let’s get linked!](https://www.linkedin.com/in/pablosalvadorlopez/?locale=en_US)
+## 🔧 Prerequisites
 
+Please make sure you have met all the prerequisites for this project. A detailed guide on how to set up your environment and get ready to run all the notebooks and code in this repository can be found in the [SETTINGS.md](SETTINGS.md) file. Please follow the instructions there to ensure a smooth exprience.
+
+## 💼 Contributing:
+
+Eager to make significant contributions? Our **[CONTRIBUTING](./CONTRIBUTING.md)** guide is your essential resource! It lays out a clear path.
