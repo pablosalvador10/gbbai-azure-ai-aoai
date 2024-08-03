@@ -10,7 +10,7 @@ The series embraces a focused problem-solution framework, pairing each challenge
 
 | 🚩 **Challenge** | 📚 **Article** | 📓 **Practice** |
 |:----------------:|:--------------:|:---------------:|
-| Unpacking Azure OpenAI API Headers | [Read Article](https://medium.com/p/6dbe881e732a/edit) | [Try It Out](https://github.com/pablosalvador10/gbbai-azure-ai-aoai/blob/main/01-headers-api-response.ipynb) |
+| Unpacking Azure OpenAI Response Headers | [Read Article](https://pabloaicorner.hashnode.dev/unpacking-azure-openai-response-headers) | [Try It Out](https://github.com/pablosalvador10/gbbai-azure-ai-aoai/blob/main/01-headers-api-response.ipynb) |
 | Matching Token Count | [Read Article](link-to-article) | [Try It Out](link-to-notebook) |
 
 
@@ -23,3 +23,7 @@ Please make sure you have met all the prerequisites for this project. A detailed
 ## 💼 Contributing:
 
 Eager to make significant contributions? Our **[CONTRIBUTING](./CONTRIBUTING.md)** guide is your essential resource! It lays out a clear path.
+
+### Disclaimer
+> [!IMPORTANT]
+> This software is provided for demonstration purposes only. It is not intended to be relied upon for any purpose. The creators of this software make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability or availability with respect to the software or the information, products, services, or related graphics contained in the software for any purpose. Any reliance you place on such information is therefore strictly at your own risk.
