@@ -10,8 +10,9 @@ The series embraces a focused problem-solution framework, pairing each challenge
 
 | 🚩 **Challenge** | 📚 **Article** | 📓 **Practice** |
 |:----------------:|:--------------:|:---------------:|
-| Unpacking Azure OpenAI Response Headers | [Read Article](https://pabloaicorner.hashnode.dev/unpacking-azure-openai-response-headers) | [Try It Out](https://github.com/pablosalvador10/gbbai-azure-ai-aoai/blob/main/01-headers-api-response.ipynb) |
-| Matching Token Count | [Read Article](link-to-article) | [Try It Out](link-to-notebook) |
+| **Navigating Azure OpenAI API Rate Limits**<br>_429 Error Explained_ | [Read Article](https://pabloaicorner.hashnode.dev/error-429-explained-navigating-azure-openai-api-rate-limits) | - |
+| **Unpacking Azure OpenAI Response Headers**<br>_Programmatically Monitor and Manage Rate Limits_ | [Read Article](https://pabloaicorner.hashnode.dev/how-to-extract-and-analyze-azure-openai-response-headers) | [Try It Out](https://github.com/pablosalvador10/gbbai-azure-ai-aoai/blob/main/01-headers-api-response.ipynb) |
+| **Matching Token Count** | [Read Article](link-to-article) | [Try It Out](link-to-notebook) |
 
 
 New entries will be added regularly, broadening your practical knowledge and skills in applying Azure OpenAI to real-world challenges. This resource is crafted for anyone looking to deepen their understanding and hands-on experience with Azure OpenAI technologies.
