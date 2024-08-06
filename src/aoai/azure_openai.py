@@ -158,20 +158,15 @@ class AzureOpenAIManager:
             return completion
 
         except openai.APIConnectionError as e:
-            logger.error("The server could not be reached")
-            logger.error(e.__cause__)
-            return None
-        except openai.RateLimitError:
-            logger.error("A 429 status code was received; we should back off a bit.")
-            return None
-        except openai.APIStatusError as e:
-            logger.error("Another non-200-range status code was received")
-            logger.error(e.status_code)
-            logger.error(e.response)
-            return None
+            logger.error("API Connection Error: The server could not be reached.")
+            logger.error(f"Error details: {e}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            return None, None
         except Exception as e:
-            logger.error(f"OpenAI API error: {e}")
-            return None
+            logger.error("Unexpected Error: An unexpected error occurred during contextual response generation.")
+            logger.error(f"Error details: {e}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            return None, None
 
     async def async_generate_chat_completion_response(
         self,
@@ -277,20 +272,15 @@ class AzureOpenAIManager:
             )
             return result
         except openai.APIConnectionError as e:
-            logger.error("The server could not be reached")
-            logger.error(e.__cause__)
-            return None
-        except openai.RateLimitError:
-            logger.error("A 429 status code was received; we should back off a bit.")
-            return None
-        except openai.APIStatusError as e:
-            logger.error("Another non-200-range status code was received")
-            logger.error(e.status_code)
-            logger.error(e.response)
-            return None
+            logger.error("API Connection Error: The server could not be reached.")
+            logger.error(f"Error details: {e}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            return None, None
         except Exception as e:
-            logger.error(f"Contextual response generation error: {e}")
-            return None
+            logger.error("Unexpected Error: An unexpected error occurred during contextual response generation.")
+            logger.error(f"Error details: {e}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            return None, None
         
     async def generate_chat_response(
         self,
@@ -476,20 +466,15 @@ class AzureOpenAIManager:
 
             return image_url
         except openai.APIConnectionError as e:
-            logger.error("The server could not be reached")
-            logger.error(e.__cause__)
-            return None
-        except openai.RateLimitError:
-            logger.error("A 429 status code was received; we should back off a bit.")
-            return None
-        except openai.APIStatusError as e:
-            logger.error("Another non-200-range status code was received")
-            logger.error(e.status_code)
-            logger.error(e.response)
-            return None
+            logger.error("API Connection Error: The server could not be reached.")
+            logger.error(f"Error details: {e}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            return None, None
         except Exception as e:
-            logger.error(f"OpenAI API error: {e}")
-            return None
+            logger.error("Unexpected Error: An unexpected error occurred during contextual response generation.")
+            logger.error(f"Error details: {e}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            return None, None
 
     def generate_embedding(
         self, input_text: str, model_name: Optional[str] = None, **kwargs
@@ -513,22 +498,16 @@ class AzureOpenAIManager:
             embedding = response.model_dump_json(indent=2)
             logger.info(f"Created embedding: {embedding}")
             return embedding
-
         except openai.APIConnectionError as e:
-            logger.error("The server could not be reached")
-            logger.error(e.__cause__)
-            return None
-        except openai.RateLimitError:
-            logger.error("A 429 status code was received; we should back off a bit.")
-            return None
-        except openai.APIStatusError as e:
-            logger.error("Another non-200-range status code was received")
-            logger.error(e.status_code)
-            logger.error(e.response)
-            return None
+            logger.error("API Connection Error: The server could not be reached.")
+            logger.error(f"Error details: {e}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            return None, None
         except Exception as e:
-            logger.error(f"OpenAI API error: {e}")
-            return None
+            logger.error("Unexpected Error: An unexpected error occurred during contextual response generation.")
+            logger.error(f"Error details: {e}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            return None, None
 
     def call_azure_openai_chat_completions_api(
         self, body: dict = None, api_version: str = "2023-11-01"
@@ -571,7 +550,7 @@ class AzureOpenAIManager:
         return response.status_code, response.json(), rate_limit_headers
 
     def analyze_chat_completion_token_count_results(
-        self, conversations: List[List[Dict[str, Any]]], model: str
+        self, conversations: List[List[Dict[str, Any]]], model: str, api_version: Optional[str] = "2024-02-01"
     ) -> Tuple[List[Dict[str, Any]], int, int]:
         """
         Analyze a list of conversations to compare the estimated token counts against actual values.
@@ -603,7 +582,7 @@ class AzureOpenAIManager:
                 response,
                 rate_limit_info,
             ) = self.call_azure_openai_chat_completions_api(
-                body=body, api_version="2023-05-15"
+                body=body, api_version=api_version
             )
 
             if status_code != 200:
