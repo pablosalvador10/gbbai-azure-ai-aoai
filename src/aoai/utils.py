@@ -42,9 +42,13 @@ def calculate_accuracy(total_estimated: int, total_actual: int) -> float:
     :param total_estimated: The total number of estimated tokens.
     :param total_actual: The total number of actual tokens.
 
-    :return: The accuracy of the estimation.
+    :return: The accuracy of the estimation as a percentage.
     """
-    accuracy = (total_estimated / total_actual) * 100 if total_actual > 0 else 0
+    if total_actual > 0:
+        accuracy = (total_estimated / total_actual) * 100
+        accuracy = max(0, min(accuracy, 100))  # Ensure accuracy is between 0 and 100
+    else:
+        accuracy = 0
     logger.info(f"Accuracy: {accuracy}%")
     return accuracy
 

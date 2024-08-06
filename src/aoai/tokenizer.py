@@ -3,7 +3,8 @@
 """
 
 from typing import Dict, List, Optional, Union
-
+from PIL import Image
+import io
 import tiktoken
 
 # Load environment variables from .env file
@@ -32,6 +33,7 @@ class AzureOpenAITokenizer:
         "gpt-4-0613": 3,
         "gpt-4-32k-0613": 3,
         "gpt-3.5-turbo-0301": 4,
+        "gpt-4o": 3,
     }
     TOKENS_PER_NAME = {
         "gpt-3.5-turbo-0301": -1,
@@ -111,3 +113,67 @@ class AzureOpenAITokenizer:
         num_tokens = len(encoding.encode(response))
 
         return num_tokens
+    
+    # This function is derived from the official documentation and provides a best-effort estimation.
+    # For more information, visit: https://platform.openai.com/docs/guides/vision
+    def calculate_image_token(
+            self,
+            image_data: Union[bytes, str],
+            detail: str
+        ) -> int:
+        """
+        Calculate the token cost for an image based on its size and detail level.
+    
+        :param image_data: The image data in bytes or the path to the image file.
+        :param detail: The detail level of the image ('low' or 'high').
+        :return: The token cost for the image.
+        """
+        try:
+            if isinstance(image_data, str):
+                image = Image.open(image_data)
+            else:
+                image = Image.open(io.BytesIO(image_data))
+            image_width, image_height = image.size
+        except Exception as e:
+            logger.error(f"Failed to open image: {e}")
+            raise ValueError("Invalid image data or path provided.")
+        
+        if detail.lower() == 'low':
+            return 85  # Fixed cost for low detail images
+        
+        # For high detail images, follow the described scaling and token calculation
+        # Step 1: Scale to fit within 2048 x 2048 while maintaining aspect ratio
+        if image_width > 2048 or image_height > 2048:
+            aspect_ratio = image_width / image_height
+            if image_width > image_height:
+                image_width = 2048
+                image_height = int(2048 / aspect_ratio)
+            else:
+                image_height = 2048
+                image_width = int(2048 * aspect_ratio)
+        
+        # Step 2: Scale such that the shortest side is 768px long
+        if image_width < image_height:
+            scale_factor = 768 / image_width
+            image_width = 768
+            image_height = int(image_height * scale_factor)
+        else:
+            scale_factor = 768 / image_height
+            image_height = 768
+            image_width = int(image_width * scale_factor)
+        
+        # Step 3: Calculate the number of 512px squares the image consists of
+        num_squares = (image_width // 512) * (image_height // 512)
+        if image_width % 512 != 0:
+            num_squares += image_height // 512
+        if image_height % 512 != 0:
+            num_squares += image_width // 512
+        if image_width % 512 != 0 and image_height % 512 != 0:
+            num_squares += 1
+        
+        # Each square costs 170 tokens and we add a fixed 85 tokens
+        total_cost = (num_squares * 170) + 85
+        return total_cost
+
+
+
