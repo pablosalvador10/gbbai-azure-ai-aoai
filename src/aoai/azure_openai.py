@@ -5,6 +5,7 @@
 import base64
 import json
 import os
+import mimetypes
 import time
 from io import BytesIO
 from typing import Any, Dict, List, Literal, Optional, Tuple, Union
@@ -280,27 +281,28 @@ class AzureOpenAIManager:
             logger.error("Unexpected Error: An unexpected error occurred during contextual response generation.")
             logger.error(f"Error details: {e}")
             logger.error(f"Traceback: {traceback.format_exc()}")
-            return None, None
-        
+            return None, None 
+
     async def generate_chat_response(
-        self,
-        query: str,
-        conversation_history: List[Dict[str, str]] = [],
-        image_paths: List[str] = None,
-        image_bytes: List[bytes] = None,
-        system_message_content: str = "You are an AI assistant that helps people find information. Please be precise, polite, and concise.",
-        temperature: float = 0.7,
-        max_tokens: int = 150,
-        seed: int = 42,
-        top_p: float = 1.0,
-        stream: bool = False,
-        tools: List[Dict[str, Union[str, Dict[str, Union[str, Dict[str, Union[str, List[str]]]]]]]] = None,
-        tool_choice: Union[str, Dict[str, Union[str, Dict[str, str]]]] = None,
-        **kwargs,
-    ) -> Optional[str]:
+            self,
+            query: str,
+            conversation_history: List[Dict[str, str]] = [],
+            image_paths: List[str] = None,
+            image_bytes: List[bytes] = None,
+            system_message_content: str = "You are an AI assistant that helps people find information. Please be precise, polite, and concise.",
+            temperature: float = 0.7,
+            max_tokens: int = 150,
+            seed: int = 42,
+            top_p: float = 1.0,
+            stream: bool = False,
+            tools: List[Dict[str, Any]] = None,
+            tool_choice: Union[str, Dict[str, Any]] = None,
+            response_format: Union[str, Dict[str, Any]] = "text",
+            **kwargs,
+        ) -> Optional[Union[str, Dict[str, Any]]]:
         """
         Generates a text response considering the conversation history.
-
+    
         :param query: The latest query to generate a response for.
         :param conversation_history: A list of message dictionaries representing the conversation history.
         :param image_paths: A list of paths to images to include in the query.
@@ -313,26 +315,30 @@ class AzureOpenAIManager:
         :param stream: Whether to stream the response. Defaults to False.
         :param tools: A list of tools the model can use.
         :param tool_choice: Controls which (if any) tool is called by the model. Can be "none", "auto", "required", or specify a particular tool.
-        :return: The generated text response or None if an error occurs.
+        :param response_format: Specifies the format of the response. Can be:
+            - A string: "text" or "json_object".
+            - A dictionary specifying a custom response format, including a JSON schema when needed.
+        :return: The generated text response as a string if response_format is "text", or a dictionary containing the response and conversation history if response_format is "json_object". Returns None if an error occurs.
         """
+        start_time = time.time()
+        logger.info(f"Function generate_chat_response started at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(start_time))}")
+    
         try:
             if tools is not None and tool_choice is None:
                 logger.debug("Tools are provided but tool_choice is None. Setting tool_choice to 'auto'.")
-                logger.debug("tool_choice: Controls which (if any) tool is called by the model. Can be 'none', 'auto', 'required', or specify a particular tool.")
                 tool_choice = "auto"
             else:
                 logger.debug(f"Tools: {tools}, Tool Choice: {tool_choice}")
-                logger.debug("tool_choice: Controls which (if any) tool is called by the model. Can be 'none', 'auto', 'required', or specify a particular tool.")
-           
+    
             system_message = {"role": "system", "content": system_message_content}
             if not conversation_history or conversation_history[0] != system_message:
                 conversation_history.insert(0, system_message)
-
+    
             user_message = {
                 "role": "user",
                 "content": query,
             }
-
+    
             if image_bytes:
                 for image in image_bytes:
                     encoded_image = base64.b64encode(image).decode("utf-8")
@@ -344,13 +350,28 @@ class AzureOpenAIManager:
                     try:
                         with open(image_path, "rb") as image_file:
                             encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
-                            user_message["content"] += f"\n![Image](data:image/jpeg;base64,{encoded_image})"
+                            mime_type, _ = mimetypes.guess_type(image_path)
+                            if mime_type is None:
+                                mime_type = "application/octet-stream"
+                            user_message["content"] += f"\n![Image](data:{mime_type};base64,{encoded_image})"
                     except Exception as e:
                         logger.error(f"Error processing image {image_path}: {e}")
-
+    
             messages_for_api = conversation_history + [user_message]
-            logger.info(f"Sending request to Azure OpenAI with query: {query}")
-
+            logger.info(f"Sending request to Azure OpenAI at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))}")
+    
+            if isinstance(response_format, str):
+                response_format_param = {"type": response_format}
+            elif isinstance(response_format, dict):
+                if response_format.get("type") == "json_schema":
+                    json_schema = response_format.get("json_schema", {})
+                    if json_schema.get("strict", False):
+                        if "name" not in json_schema or "schema" not in json_schema:
+                            raise ValueError("When 'strict' is True, 'name' and 'schema' must be provided in 'json_schema'.")
+                response_format_param = response_format  
+            else:
+                raise ValueError("Invalid response_format. Must be a string or a dictionary.")
+    
             response = self.openai_client.chat.completions.create(
                 model=self.chat_model_name,
                 messages=messages_for_api,
@@ -360,10 +381,11 @@ class AzureOpenAIManager:
                 top_p=top_p,
                 stream=stream,
                 tools=tools,
+                response_format=response_format_param,
                 tool_choice=tool_choice,
                 **kwargs,
             )
-
+    
             if stream:
                 response_content = ""
                 for event in response:
@@ -376,22 +398,44 @@ class AzureOpenAIManager:
                         time.sleep(0.001)  # Maintain minimal sleep to reduce latency
             else:
                 response_content = response.choices[0].message.content
-
+    
             conversation_history.append(user_message)
             conversation_history.append({"role": "assistant", "content": response_content})
-
-            return response_content, conversation_history
-
+    
+            end_time = time.time()
+            duration = end_time - start_time
+            logger.info(f"Function generate_chat_response finished at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(end_time))} (Duration: {duration:.2f} seconds)")
+    
+            if isinstance(response_format, str) and response_format == "json_object":
+                try:
+                    parsed_response = json.loads(response_content)
+                    return {
+                        "response": parsed_response,
+                        "conversation_history": conversation_history
+                    }
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse assistant's response as JSON: {e}")
+                    return {
+                        "response": response_content,
+                        "conversation_history": conversation_history
+                    }
+            else:
+                return {
+                    "response": response_content,
+                    "conversation_history": conversation_history
+                }
+    
         except openai.APIConnectionError as e:
             logger.error("API Connection Error: The server could not be reached.")
             logger.error(f"Error details: {e}")
             logger.error(f"Traceback: {traceback.format_exc()}")
-            return None, None
+            return None
         except Exception as e:
             logger.error("Unexpected Error: An unexpected error occurred during contextual response generation.")
             logger.error(f"Error details: {e}")
             logger.error(f"Traceback: {traceback.format_exc()}")
-            return None, None
+            return None
+
 
     def generate_image(
         self,

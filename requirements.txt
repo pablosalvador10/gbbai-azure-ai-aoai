@@ -1,4 +1,4 @@
-openai
+openai==1.45.1
 tiktoken
 requests
 python-dotenv
